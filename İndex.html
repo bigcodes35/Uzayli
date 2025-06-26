@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uzaylı Avcısı | BigCode A.Ş.</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b0f1a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-top: 20px;
+      font-size: 30px;
+      color: #00ffd9;
+      text-shadow: 0 0 10px #00ffd9;
+    }
+    .menu {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 300px;
+    }
+    .menu button {
+      padding: 15px;
+      font-size: 18px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .menu button:hover {
+      background-color: #0051a3;
+    }
+    .language-select {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .language-select button {
+      background-color: #222;
+      border: 1px solid #666;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .language-select button:hover {
+      background-color: #444;
+    }
+    .footer {
+      margin-top: auto;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛸 Uzaylı Avcısı</h1>
+
+  <div class="menu">
+    <button onclick="window.location.href='start.html'">🎮 Oyuna Başla</button>
+    <!-- Seviyeler kaldırıldı -->
+    <button onclick="window.location.href='lig-tablosu.html'">🏆 Lig Tablosu</button>
+    <button onclick="window.location.href='shop.html'">🛒 Kostümler & Paralı Özellikler</button>
+    <button onclick="window.location.href='settings.html'">⚙️ Ayarlar</button>
+  </div>
+
+  <div class="language-select">
+    <button onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
+    <button onclick="setLanguage('de')">🇩🇪 Deutsch</button>
+    <button onclick="setLanguage('en')">🇬🇧 English</button>
+  </div>
+
+  <div class="footer">
+    BigCode A.Ş. &copy; 2025 - Tüm hakları saklıdır.
+  </div>
+
+  <script>
+    function setLanguage(lang) {
+      localStorage.setItem('lang', lang);
+      alert("Dil seçildi: " + lang.toUpperCase());
+      // Gelecekte: Çok dilli desteği buraya eklersin
+    }
+  </script>
+
+</body>
+</html>
