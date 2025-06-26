@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Uzaylı Avcısı - Başla</title>
+  <style>
+    body {
+      background-color: #0b0f1a;
+      color: #00ffd9;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    button {
+      font-size: 24px;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 10px;
+      background-color: #00ffd9;
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00ffd9;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #00bfa3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛸 Uzaylı Avcısı</h1>
+  <button onclick="oyunuBaslat()">Oyunu Başlat</button>
+
+  <script>
+    function oyunuBaslat() {
+      localStorage.setItem('oyunBasladi', 'evet');
+      window.location.href = 'oyun.html';
+    }
+  </script>
+
+</body>
+</html>
