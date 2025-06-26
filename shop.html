@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🛒 Kostümler & Paralı Özellikler | Uzaylı Avcısı</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b0f1a;
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    h1, h2 {
+      color: #00ffd9;
+      text-shadow: 0 0 10px #00ffd9;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+    .category {
+      margin-bottom: 40px;
+    }
+    .item-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .item {
+      background-color: #111827;
+      border-radius: 12px;
+      padding: 15px;
+      width: 150px;
+      box-shadow: 0 0 10px #00ffd9aa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .item img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 2px #00ffd9);
+    }
+    .item-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .item-price {
+      margin-bottom: 10px;
+      color: #00ffd9;
+      font-weight: 600;
+    }
+    .buy-button {
+      background-color: #007bff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    .buy-button:hover:not(:disabled) {
+      background-color: #0051a3;
+    }
+    .buy-button:disabled {
+      background-color: #444;
+      cursor: default;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      opacity: 0.6;
+      text-align: center;
+    }
+    .back-button {
+      margin-bottom: 20px;
+      display: inline-block;
+      color: #00ffd9;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      border: 2px solid #00ffd9;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+    .back-button:hover {
+      background-color: #00ffd9;
+      color: #0b0f1a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="index.html" class="back-button" id="back-button">⬅️ Ana Sayfa</a>
+    <h1 id="page-title">🛒 Kostümler & Paralı Özellikler</h1>
+
+    <div class="category">
+      <h2 id="costumes-title">Kostümler</h2>
+      <div class="item-list" id="costumes-list">
+        <!-- Kostümler buraya JS ile yüklenecek -->
+      </div>
+    </div>
+
+    <div class="category">
+      <h2 id="features-title">Paralı Özellikler</h2>
+      <div class="item-list" id="features-list">
+        <!-- Paralı özellikler buraya JS ile yüklenecek -->
+      </div>
+    </div>
+
+    <div class="footer" id="footer-text">
+      BigCode A.Ş. &copy; 2025 - Tüm hakları saklıdır.
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      tr: {
+        pageTitle: "🛒 Kostümler & Paralı Özellikler",
+        costumesTitle: "Kostümler",
+        featuresTitle: "Paralı Özellikler",
+        buy: "Satın Al",
+        bought: "Satın Alındı",
+        back: "⬅️ Ana Sayfa",
+        footer: "BigCode A.Ş. © 2025 - Tüm hakları saklıdır."
+      },
+      en: {
+        pageTitle: "🛒 Skins & Paid Features",
+        costumesTitle: "Skins",
+        featuresTitle: "Paid Features",
+        buy: "Buy",
+        bought: "Purchased",
+        back: "⬅️ Home",
+        footer: "BigCode Inc. © 2025 - All rights reserved."
+      },
+      de: {
+        pageTitle: "🛒 Kostüme & Bezahlte Features",
+        costumesTitle: "Kostüme",
+        featuresTitle: "Bezahlte Features",
+        buy: "Kaufen",
+        bought: "Gekauft",
+        back: "⬅️ Startseite",
+        footer: "BigCode GmbH © 2025 - Alle Rechte vorbehalten."
+      }
+    };
+
+    // Örnek ürünler
+    const costumes = [
+      { id: "costume1", name: { tr: "Uzaylı Kıyafeti", en: "Alien Suit", de: "Alien-Anzug" }, price: 100, img: "https://img.icons8.com/ios-filled/100/00ffd9/astronaut.png" },
+      { id: "costume2", name: { tr: "Robot Kostümü", en: "Robot Costume", de: "Roboter-Kostüm" }, price: 150, img: "https://img.icons8.com/ios-filled/100/00ffd9/robot-2.png" },
+      { id: "costume3", name: { tr: "Ninja Kıyafeti", en: "Ninja Outfit", de: "Ninja-Outfit" }, price: 120, img: "https://img.icons8.com/ios-filled/100/00ffd9/ninja-head.png" }
+    ];
+
+    const features = [
+      { id: "feature1", name: { tr: "Ekstra Can", en: "Extra Life", de: "Extra Leben" }, price: 50, img: "https://img.icons8.com/ios-filled/100/00ffd9/heart.png" },
+      { id: "feature2", name: { tr: "Hızlı Koşu", en: "Fast Run", de: "Schnelles Laufen" }, price: 70, img: "https://img.icons8.com/ios-filled/100/00ffd9/running.png" },
+      { id: "feature3", name: { tr: "Görünmezlik", en: "Invisibility", de: "Unsichtbarkeit" }, price: 200, img: "https://img.icons8.com/ios-filled/100/00ffd9/spy.png" }
+    ];
+
+    let currentLang = localStorage.getItem('lang') || 'tr';
+
+    function translatePage() {
+      const t = translations[currentLang];
+      document.getElementById('page-title').textContent = t.pageTitle;
+      document.getElementById('costumes-title').textContent = t.costumesTitle;
+      document.getElementById('features-title').textContent = t.featuresTitle;
+      document.getElementById('back-button').textContent = t.back;
+      document.getElementById('footer-text').textContent = t.footer;
+
+      // Güncelle buton metinlerini
+      updateBuyButtons();
+    }
+
+    function updateBuyButtons() {
+      const boughtItems = JSON.parse(localStorage.getItem('boughtItems') || "[]");
+      const t = translations[currentLang];
+
+      document.querySelectorAll('.buy-button').forEach(btn => {
+        const itemId = btn.dataset.itemId;
+        if (boughtItems.includes(itemId)) {
+          btn.textContent = t.bought;
+          btn.disabled = true;
+        } else {
+          btn.textContent = t.buy;
+          btn.disabled = false;
+        }
+      });
+    }
+
+    function buyItem(itemId) {
+      let boughtItems = JSON.parse(localStorage.getItem('boughtItems') || "[]");
+      if (!boughtItems.includes(itemId)) {
+        boughtItems.push(itemId);
+        localStorage.setItem('boughtItems', JSON.stringify(boughtItems));
+        alert(translations[currentLang].bought + "!");
+        updateBuyButtons();
+      }
+    }
+
+    function renderItems() {
+      const costumesList = document.getElementById('costumes-list');
+      const featuresList = document.getElementById('features-list');
+
+      costumesList.innerHTML = "";
+      featuresList.innerHTML = "";
+
+      costumes.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name[currentLang]}" />
+          <div class="item-name">${item.name[currentLang]}</div>
+          <div class="item-price">${item.price} VP</div>
+          <button class="buy-button" data-item-id="${item.id}" onclick="buyItem('${item.id}')">${translations[currentLang].buy}</button>
+        `;
+        costumesList.appendChild(div);
+      });
+
+      features.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name[currentLang]}" />
+          <div class="item-name">${item.name[currentLang]}</div>
+          <div class="item-price">${item.price} VP</div>
+          <button class="buy-button" data-item-id="${item.id}" onclick="buyItem('${item.id}')">${translations[currentLang].buy}</button>
+        `;
+        featuresList.appendChild(div);
+      });
+
+      updateBuyButtons();
+    }
+
+    function setLanguage(lang) {
+      if (!translations[lang]) lang = 'tr';
+      currentLang = lang;
+      localStorage.setItem('lang', lang);
+      translatePage();
+      renderItems();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setLanguage(currentLang);
+    });
+  </script>
+
+</body>
+</html>
