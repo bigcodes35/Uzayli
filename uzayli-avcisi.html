@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Uzaylı Avcısı | BigCode A.Ş.</title>
+<style>
+  /* Genel ayarlar */
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    background: radial-gradient(circle at center, #001f2f, #000810);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+  }
+  #gameArea {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #scoreBoard {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: #00ffd9;
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ffd9;
+    z-index: 1000;
+  }
+  #livesBoard {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #ff4444;
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff4444;
+    z-index: 1000;
+  }
+
+  /* Oyuncu */
+  #player {
+    position: absolute;
+    width: 70px;
+    height: 80px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAIAAAAiGpCUAAAArklEQVR4nO3VQQqDQBQE0LXH/74uS7uIi9zqHOPfVJxSi5YUZY5jHS5h1rB1lWcZBQECBAgQIECAwTk/14guRMm3Ig53aT5uGz1vNtOse/4jMqXr5sh6FuCyPzy0TLc/9YYZ1rZzKq5LHxvGrkRtmI/xQ5chce67B2ElzlvMXRZddSm3aX/c4qFrx7O1zH4PmUPhPJ0W6B/LoZfAqjeDm3pYNOExw5F9AuA7d0GLv3/Rqf9U/lLrtEnHrwXEkIECBBoY5P+xL5JLGiOcWcAAAAASUVORK5CYII=');
+    background-size: contain;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: left 0.1s ease;
+    z-index: 10;
+  }
+
+  /* Uzaylı */
+  .alien {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACqa/kHAAAArklEQVR4nO3XMQrDIBBE0Xq4TwVNHdF7TsgtxUwdymbPLfxg7CjNsqTlMWidThxIdV87P+txdyXPvX4F1AyjOYKYI6BqDlAnYwSgygy3g6zIDxiwI5gHQrcc8HeBYMSAH+9hxJjAbych2J66hwPbAMhK7B2G6X1UA9MQZhOEdgBwbVChMZhQPtqgG7CQZwCE7ZwRY2UCGXAa53JKj+1B6BMyA9t0G8ELyQ6MDguAz4HRe/gDTC/NuPJqpq0j0kAAAAASUVORK5CYII=');
+    background-size: contain;
+    background-repeat: no-repeat;
+    user-select: none;
+    z-index: 9;
+  }
+
+  /* Animasyon efektleri */
+  .hit {
+    animation: hitFlash 0.3s;
+  }
+  @keyframes hitFlash {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(3); }
+  }
+
+</style>
+</head>
+<body>
+
+<div id="gameArea">
+  <div id="scoreBoard">Puan: 0</div>
+  <div id="livesBoard">Can: 3</div>
+  <div id="player"></div>
+</div>
+
+<script>
+  const gameArea = document.getElementById('gameArea');
+  const player = document.getElementById('player');
+  const scoreBoard = document.getElementById('scoreBoard');
+  const livesBoard = document.getElementById('livesBoard');
+
+  let score = 0;
+  let lives = 3;
+  let alienSpeed = 2;  // Başlangıç düşüş hızı
+  let alienSpawnInterval = 1800; // ms
+
+  // Oyuncunun konumu (soldan px)
+  let playerX = window.innerWidth / 2 - player.offsetWidth / 2;
+  player.style.left = playerX + 'px';
+
+  // Oyuncuyu hareket ettir (dokunmatik ve fare sürükleme)
+  let dragging = false;
+
+  function movePlayerTo(x) {
+    const minX = 0;
+    const maxX = window.innerWidth - player.offsetWidth;
+    playerX = Math.min(Math.max(x, minX), maxX);
+    player.style.left = playerX + 'px';
+  }
+
+  // Dokunmatik hareket
+  gameArea.addEventListener('touchstart', e => {
+    dragging = true;
+    const touchX = e.touches[0].clientX - player.offsetWidth/2;
+    movePlayerTo(touchX);
+  });
+  gameArea.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const touchX = e.touches[0].clientX - player.offsetWidth/2;
+    movePlayerTo(touchX);
+  });
+  gameArea.addEventListener('touchend', e => {
+    dragging = false;
+  });
+
+  // Fare ile sürükleme
+  gameArea.addEventListener('mousedown', e => {
+    dragging = true;
+    movePlayerTo(e.clientX - player.offsetWidth/2);
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    movePlayerTo(e.clientX - player.offsetWidth/2);
+  });
+  window.addEventListener('mouseup', e => {
+    dragging = false;
+  });
+
+  // Uzaylı oluşturma ve hareket ettirme
+  const aliens = [];
+
+  function createAlien() {
+    if (lives <= 0) return; // oyun bitti
+
+    const alien = document.createElement('div');
+    alien.className = 'alien';
+    alien.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+    alien.style.top = '-50px';
+    gameArea.appendChild(alien);
+
+    aliens.push({el: alien, top: -50});
+  }
+
+  // Çarpışma kontrolü
+  function isColliding(a, b) {
+    const rectA = a.getBoundingClientRect();
+    const rectB = b.getBoundingClientRect();
+
+    return !(
+      rectA.top > rectB.bottom ||
+      rectA.bottom < rectB.top ||
+      rectA.right < rectB.left ||
+      rectA.left > rectB.right
+    );
+  }
+
+  // Ana oyun döngüsü
+  function gameLoop() {
+    if (lives <= 0) {
+      alert('Oyun bitti! Puanınız: ' + score);
+      return;
+    }
+
+    // Uzaylıları hareket ettir
+    aliens.forEach((alienObj, idx) => {
+      alienObj.top += alienSpeed;
+      alienObj.el.style.top = alienObj.top + 'px';
+
+      // Oyuncuyla çarpışma kontrolü
+      if (isColliding(player, alienObj.el)) {
+        score++;
+        scoreBoard.textContent = 'Puan: ' + score;
+
+        alienObj.el.classList.add('hit');
+        setTimeout(() => alienObj.el.classList.remove('hit'), 300);
+
+        // Uzaylıyı kaldır
+        gameArea.removeChild(alienObj.el);
+        aliens.splice(idx, 1);
+
+        // Hızı arttırarak zorluk yükseliyor
+        if (score % 5 === 0) {
+          alienSpeed += 0.5;
+          if (alienSpawnInterval > 600) alienSpawnInterval -= 100;
+        }
+      }
+      // Ekranın altına ulaşırsa can azalır
+      else if (alienObj.top > window.innerHeight) {
+        lives--;
+        livesBoard.textContent = 'Can: ' + lives;
+
+        gameArea.removeChild(alienObj.el);
+        aliens.splice(idx, 1);
+
+        if (lives <= 0) {
+          alert('Oyun bitti! Puanınız: ' + score);
+        }
+      }
+    });
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  // Uzaylıları belirli aralıklarla oluştur
+  let alienSpawner = setInterval(() => {
+    if (lives <= 0) clearInterval(alienSpawner);
+    else createAlien();
+  }, alienSpawnInterval);
+
+  // Başlat
+  gameLoop();
+</script>
+
+</body>
+</html>
