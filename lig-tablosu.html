@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lig Tablosu | Uzaylı Avcısı</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #10131a;
+      color: #fff;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #00ffd0;
+      text-shadow: 0 0 10px #00ffd0;
+      margin-bottom: 30px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 600px;
+      background-color: #1a1f2b;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #2c3340;
+    }
+    th {
+      background-color: #202738;
+      color: #00ffc8;
+    }
+    tr:nth-child(1) td {
+      background-color: #3affb3;
+      color: black;
+      font-weight: bold;
+    }
+    tr:nth-child(2) td {
+      background-color: #74ffd1;
+      color: black;
+    }
+    tr:nth-child(3) td {
+      background-color: #b1ffe8;
+      color: black;
+    }
+    td {
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lig Tablosu (İlk 12)</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Sıra</th>
+        <th>Kullanıcı</th>
+        <th>Puan</th>
+      </tr>
+    </thead>
+    <tbody id="tabloBody">
+      <!-- Otomatik doldurulacak -->
+    </tbody>
+  </table>
+
+  <script>
+    const tabloBody = document.getElementById("tabloBody");
+    const oyuncular = JSON.parse(localStorage.getItem("oyuncular")) || [];
+
+    // Puanlara göre sırala (azalan)
+    oyuncular.sort((a, b) => b.puan - a.puan);
+
+    // İlk 12'yi al
+    const ilk12 = oyuncular.slice(0, 12);
+
+    ilk12.forEach((oyuncu, index) => {
+      const satir = document.createElement("tr");
+      satir.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${oyuncu.ad}</td>
+        <td>${oyuncu.puan}</td>
+      `;
+      tabloBody.appendChild(satir);
+    });
+  </script>
+
+</body>
+</html>
