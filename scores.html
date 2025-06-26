@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Uzaylı Avcısı - Puan Kaydet</title>
+  <style>
+    body { background: #12122b; color: white; font-family: Arial, sans-serif; text-align: center; padding: 30px; }
+    input, button {
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      width: 250px;
+      font-size: 16px;
+    }
+    button {
+      background: #00ffc8;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #uyari {
+      color: #ff6961;
+      margin-top: 15px;
+      height: 20px;
+    }
+    table {
+      margin: 30px auto 0;
+      width: 90%;
+      max-width: 500px;
+      border-collapse: collapse;
+      text-align: center;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+    }
+    th {
+      background-color: #222244;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎯 Oyun Bitti! Puanını Kaydet</h1>
+
+  <p>Toplam Puanın: <strong id="puanGoster"></strong></p>
+
+  <input type="text" id="ad" placeholder="Kullanıcı Adı" autocomplete="off" />
+  <button onclick="kaydet()">Kaydet</button>
+  <div id="uyari"></div>
+
+  <table>
+    <thead>
+      <tr><th>#</th><th>Oyuncu</th><th>Puan</th><th>Lig</th></tr>
+    </thead>
+    <tbody id="puanTablosu"></tbody>
+  </table>
+
+  <script>
+    const puanGoster = document.getElementById("puanGoster");
+    const uyari = document.getElementById("uyari");
+    const adInput = document.getElementById("ad");
+    const puanTablosu = document.getElementById("puanTablosu");
+
+    // Oyunun başladığını ve skoru al
+    const oyunBasladi = localStorage.getItem("oyunBasladi");
+    const skor = parseInt(localStorage.getItem("geciciSkor")) || 0;
+
+    // Eğer oyun başlamadıysa puan kaydetme hakkı yok
+    if (oyunBasladi !== "evet") {
+      uyari.textContent = "Oyuna başlamadan puan kaydedemezsiniz!";
+      adInput.disabled = true;
+    } else {
+      puanGoster.textContent = skor;
+    }
+
+    // Mevcut oyuncuları getir
+    let oyuncular = JSON.parse(localStorage.getItem("oyuncular")) || [];
+
+    function kaydet() {
+      const ad = adInput.value.trim();
+
+      if (!ad) {
+        uyari.textContent = "Lütfen kullanıcı adı girin.";
+        return;
+      }
+
+      if (oyuncular.some(o => o.ad.toLowerCase() === ad.toLowerCase())) {
+        uyari.textContent = "Bu kullanıcı adı zaten kayıtlı.";
+        return;
+      }
+
+      // Yeni oyuncu kaydı
+      oyuncular.push({ ad, puan: skor, lig: "Bronz", tarih: new Date().toISOString() });
+
+      // Lig belirle: İlk 12 Gümüş, diğerleri Bronz
+      oyuncular.sort((a, b) => b.puan - a.puan);
+      oyuncular.forEach((o, i) => {
+        o.lig = (i < 12) ? "Gümüş" : "Bronz";
+      });
+
+      // Kaydet
+      localStorage.setItem("oyuncular", JSON.stringify(oyuncular));
+
+      // Temizle, uyarı ve tablo güncelle
+      uyari.textContent = "Puan kaydedildi! Teşekkürler 🎉";
+      adInput.value = "";
+      adInput.disabled = true;
+
+      // Oyunun bitiş durumunu sıfırla
+      localStorage.removeItem("oyunBasladi");
+      localStorage.removeItem("geciciSkor");
+
+      tabloGuncelle();
+    }
+
+    function tabloGuncelle() {
+      puanTablosu.innerHTML = "";
+      oyuncular.forEach((o, i) => {
+        puanTablosu.innerHTML += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${o.ad}</td>
+            <td>${o.puan}</td>
+            <td>${o.lig}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Sayfa yüklendiğinde tabloyu göster
+    window.onload = tabloGuncelle;
+  </script>
+
+</body>
+</html>
