@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uzaylı Avcısı - Dokunmatik Oyun</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      overflow: hidden;
+    }
+
+    #gameArea {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #player {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: cyan;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 5px;
+      transition: left 0.2s ease;
+    }
+
+    .alien {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-color: limegreen;
+      border: 3px solid black;
+      border-radius: 10px;
+      top: 0;
+    }
+
+    #scoreBoard {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameArea">
+    <div id="scoreBoard">Puan: 0</div>
+    <div id="player"></div>
+  </div>
+
+  <script>
+    const gameArea = document.getElementById("gameArea");
+    const player = document.getElementById("player");
+    const scoreBoard = document.getElementById("scoreBoard");
+    let score = 0;
+
+    // Dokunmatik kontrol
+    gameArea.addEventListener("touchstart", movePlayer);
+    gameArea.addEventListener("touchmove", movePlayer);
+
+    function movePlayer(e) {
+      const touchX = e.touches[0].clientX;
+      const newLeft = Math.min(window.innerWidth - player.offsetWidth, Math.max(0, touchX - player.offsetWidth / 2));
+      player.style.left = `${newLeft}px`;
+    }
+
+    // Uzaylı oluştur
+    function createAlien() {
+      const alien = document.createElement("div");
+      alien.className = "alien";
+      alien.style.left = Math.random() * (window.innerWidth - 40) + "px";
+      gameArea.appendChild(alien);
+
+      let topPos = 0;
+      const fallSpeed = 2;
+      const fallInterval = setInterval(() => {
+        topPos += fallSpeed;
+        alien.style.top = topPos + "px";
+
+        if (isColliding(player, alien)) {
+          score++;
+          scoreBoard.textContent = "Puan: " + score;
+          clearInterval(fallInterval);
+          alien.remove();
+        }
+
+        if (topPos > window.innerHeight) {
+          clearInterval(fallInterval);
+          alien.remove();
+        }
+      }, 10);
+    }
+
+    function isColliding(a, b) {
+      const aRect = a.getBoundingClientRect();
+      const bRect = b.getBoundingClientRect();
+
+      return !(
+        aRect.top > bRect.bottom ||
+        aRect.bottom < bRect.top ||
+        aRect.right < bRect.left ||
+        aRect.left > bRect.right
+      );
+    }
+
+    setInterval(createAlien, 2000);
+  </script>
+</body>
+</html>
