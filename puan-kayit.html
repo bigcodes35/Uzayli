@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lig Kaydı | Uzaylı Avcısı</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b0f1a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h2 {
+      color: #00ffd9;
+      margin-bottom: 20px;
+      text-shadow: 0 0 8px #00ffd9;
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 15px;
+      width: 200px;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 20px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0051a3;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+    .success {
+      color: #00ff90;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🏆 Lig Kaydı</h2>
+  <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı" />
+  <button onclick="kayitYap()">Kaydet</button>
+  <div id="mesaj"></div>
+
+  <script>
+    const oyunBasladi = localStorage.getItem("oyunBasladi");
+    const puan = localStorage.getItem("geciciSkor");
+
+    function kayitYap() {
+      const ad = document.getElementById("kullaniciAdi").value.trim();
+      const mesaj = document.getElementById("mesaj");
+
+      if (!ad) {
+        mesaj.innerHTML = "<div class='error'>⚠️ Lütfen kullanıcı adınızı girin.</div>";
+        return;
+      }
+
+      if (oyunBasladi !== "evet" || !puan) {
+        mesaj.innerHTML = "<div class='error'>⚠️ Oyunu oynamadan kayıt yapılamaz.</div>";
+        return;
+      }
+
+      let oyuncular = JSON.parse(localStorage.getItem("oyuncular")) || [];
+
+      // Aynı isim kontrolü
+      if (oyuncular.some(o => o.ad === ad)) {
+        mesaj.innerHTML = "<div class='error'>⚠️ Bu kullanıcı adı zaten var. Başka bir ad deneyin.</div>";
+        return;
+      }
+
+      // Kaydet
+      oyuncular.push({ ad, puan: parseInt(puan) });
+      localStorage.setItem("oyuncular", JSON.stringify(oyuncular));
+
+      // Flag sıfırlanır
+      localStorage.removeItem("oyunBasladi");
+      localStorage.removeItem("geciciSkor");
+
+      mesaj.innerHTML = "<div class='success'>✅ Kayıt başarılı! Lig tablosuna eklendiniz.</div>";
+    }
+  </script>
+
+</body>
+</html>
